@@ -1,11 +1,18 @@
 from flask import Flask, request, jsonify
 from flask_cors import CORS
 import sqlite3
+# import sqlitecloud
+import airtable
 
 app = Flask(__name__)
 CORS(app, resources={r"/*": {"origins": ["http://localhost:3000", "https://frontend-i5m3jh390-karti-bombs-projects.vercel.app"]}})
+
+DB_CONN_STR = "sqlitecloud://cjovbg3mnz.sqlite.cloud:8860?apikey=DynrgkzGbHbVidIsqqVazz44VbEm4ZAa0iaaY2olU80"
+
 def init_db():
-    with sqlite3.connect('app.db') as conn:
+    with sqlitecloud.connect(DB_CONN_STR) as conn:
+        db_name = "fronthacks.sqlite"
+        conn.execute(f"USE DATABASE {db_name}")
         cursor = conn.cursor()
         cursor.execute('''
             CREATE TABLE IF NOT EXISTS users (
@@ -28,7 +35,7 @@ def init_db():
         conn.commit()
     print("Database initialized.")
 
-init_db()
+
 
 @app.route('/register', methods=['POST'])
 def register():
@@ -36,7 +43,7 @@ def register():
     username = data.get('username')
     password = data.get('password')
 
-    with sqlite3.connect('app.db') as conn:
+    with sqlitecloud.connect(DB_CONN_STR) as conn:
         cursor = conn.cursor()
         try:
             cursor.execute("INSERT INTO users (username, password) VALUES (?, ?)", (username, password))
@@ -51,7 +58,7 @@ def login():
     username = data.get('username')
     password = data.get('password')
 
-    with sqlite3.connect('app.db') as conn:
+    with sqlitecloud.connect(DB_CONN_STR) as conn:
         cursor = conn.cursor()
         cursor.execute("SELECT * FROM users WHERE username = ? AND password = ?", (username, password))
         user = cursor.fetchone()
@@ -63,20 +70,20 @@ def login():
 @app.route('/submit', methods=['POST'])
 def submit():
     data = request.get_json()
-    user_id = data.get('user_id')  # Get user ID from the request
+    user_id = data.get('user_id') 
     latitude1 = data.get('latitude1')
     longitude1 = data.get('longitude1')
     latitude2 = data.get('latitude2')
     longitude2 = data.get('longitude2')
 
-    # Check if this user already submitted their locations
-    with sqlite3.connect('app.db') as conn:
+    
+    with sqlitecloud.connect(DB_CONN_STR) as conn:
         cursor = conn.cursor()
         cursor.execute("SELECT * FROM locations WHERE user_id = ?", (user_id,))
-        if cursor.fetchone():  # If any entry exists, user already submitted
+        if cursor.fetchone(): 
             return jsonify({'status': 'error', 'message': 'You have already submitted your start and end locations for this session.'}), 403
 
-        # Insert new data for this user
+        
         cursor.execute('''
             INSERT INTO locations (user_id, latitudeStart, longitudeStart, latitudeEnd, longitudeEnd)
             VALUES (?, ?, ?, ?, ?)
@@ -87,4 +94,15 @@ def submit():
 
 if __name__ == '__main__':
     port = 10000
-    app.run(host="127.0.0.1", port=port, debug=True)
+    # conn = sqlitecloud.connect(DB_CONN_STR)
+
+# You can autoselect the database during the connect call
+# by adding the database name as path of the SQLite Cloud
+# connection string, eg:
+    AIRTABLE_API_KEY = 'patsFqbRqun6dUd2J.ac98f1950d92ace45ecb36edc8fb73956d10cf63975540135821f13df6814b9b'
+    BASE_ID ="appdXx9TjXKr6XqeL"
+    at = airtable.Airtable(BASE_ID, AIRTABLE_API_KEY)
+    table = at.get('Route Requests')
+    print(table)
+
+    app.run(host="0.0.0.0", port=port, debug=True)

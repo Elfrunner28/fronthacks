@@ -9,6 +9,8 @@ readme = "README.md"
 python = "^3.13"
 flask = "^3.1.0"
 flask-cors = "^5.0.0"
+sqlitecloud = "^0.0.83"
+airtable = "^0.4.8"
 
 
 [build-system]
