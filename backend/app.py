@@ -3,8 +3,7 @@ from flask_cors import CORS
 import sqlite3
 
 app = Flask(__name__)
-CORS(app, resources={r"/*": {"origins": "http://localhost:3000"}})
-
+CORS(app, resources={r"/*": {"origins": ["http://localhost:3000", "https://frontend-i5m3jh390-karti-bombs-projects.vercel.app"]}})
 def init_db():
     with sqlite3.connect('app.db') as conn:
         cursor = conn.cursor()
