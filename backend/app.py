@@ -86,4 +86,5 @@ def submit():
     return jsonify({'status': 'success', 'message': 'Coordinates saved successfully.'})
 
 if __name__ == '__main__':
-    app.run(host="127.0.0.1", port=5000, debug=True)
+    port = 10000
+    app.run(host="127.0.0.1", port=port, debug=True)
