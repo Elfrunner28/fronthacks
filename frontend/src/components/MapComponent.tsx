@@ -14,7 +14,7 @@ const MapComponent: React.FC<MapComponentProps> = ({ userId }) => {
   const navigate = useNavigate(); // React Router's navigation hook
 
   const { isLoaded, loadError } = useJsApiLoader({
-    googleMapsApiKey: import.meta.env.VITE_GOOGLE_MAPS_API_KEY || '',
+    googleMapsApiKey: import.meta.env.VITE_GOOGLE_MAPS_API_KEY || 'AIzaSyDVaMB_NV7dFfYLcD8Pt-tFHkYkFSeYgfE',
     libraries,
   });
 
