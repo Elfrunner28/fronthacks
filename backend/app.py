@@ -21,7 +21,7 @@ def register():
     """
     Handles user registration by checking if the ID already exists.
     """
-    user_id = request.json.get('id')
+    user_id = request.json.get('ID')
     if not user_id:
         return jsonify({'status': 'error', 'message': 'ID is required.'}), 400
 
