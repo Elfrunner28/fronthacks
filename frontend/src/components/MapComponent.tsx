@@ -57,7 +57,7 @@ const MapComponent: React.FC<MapComponentProps> = ({ userId }) => {
       setMessage('Please set both pickup and dropoff locations before submitting.');
       return;
     }
-
+  
     try {
       const response = await fetch(`${BACKEND_URL}/submit`, {
         method: 'POST',
@@ -65,18 +65,19 @@ const MapComponent: React.FC<MapComponentProps> = ({ userId }) => {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          id: userId, // Pass the user ID to identify the request
-          start_lat: pickup.lat,
-          start_lng: pickup.lng,
-          end_lat: dropoff.lat,
-          end_lng: dropoff.lng,
+          latitude1: pickup.lat,
+          longitude1: pickup.lng,
+          latitude2: dropoff.lat,
+          longitude2: dropoff.lng,
         }),
       });
-
+  
       const result = await response.json();
+      console.log('Backend Response:', result);
+  
       if (response.ok) {
         setHasSubmitted(true);
-        navigate('/thank-you'); // Navigate to Thank You page after successful submission
+        navigate('/thank-you');
       } else {
         setMessage(result.message || 'Failed to submit locations.');
       }
