@@ -2,89 +2,24 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 type LoginPageProps = {
-  onLogin: (username: string, userId: number) => void; // Accepts both username and userId
+  onLogin: (userId: string) => void;
 };
 
 const LoginPage: React.FC<LoginPageProps> = ({ onLogin }) => {
-  const [username, setUsername] = useState('');
-  const [password, setPassword] = useState('');
-  const [error, setError] = useState<string | null>(null);
   const navigate = useNavigate();
 
-  const BACKEND_URL = 'https://fronthacks.onrender.com'; // Replace with your Render backend URL
-
-  const handleLogin = async () => {
-    setError(null); // Reset error message
-    try {
-      const response = await fetch(`${BACKEND_URL}/login`, { // Changed to use deployed backend URL
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ username, password }),
-      });
-
-      const result = await response.json();
-
-      if (response.ok) {
-        onLogin(username, result.user_id); // Update the app's login state
-        navigate('/'); // Redirect to the main page
-      } else {
-        setError(result.message || 'Invalid credentials');
-      }
-    } catch (error) {
-      console.error('Login error:', error);
-      setError('An error occurred. Please try again.');
-    }
+  const handleLogin = () => {
+    const fakeUserId = `user-${Math.random().toString(36).substr(2, 9)}`; // Generate a fake user ID
+    onLogin(fakeUserId); // Pass the fake ID
+    navigate('/'); // Redirect to the map page
   };
 
   return (
     <div style={styles.container}>
       <div style={styles.card}>
         <h2 style={styles.title}>Login</h2>
-        <form
-          onSubmit={(e) => {
-            e.preventDefault();
-            handleLogin();
-          }}
-          style={styles.form}
-        >
-          <div style={styles.inputGroup}>
-            <label htmlFor="username" style={styles.label}>
-              Username
-            </label>
-            <input
-              id="username"
-              type="text"
-              placeholder="Enter your username"
-              value={username}
-              onChange={(e) => setUsername(e.target.value)}
-              style={styles.input}
-              required
-            />
-          </div>
-          <div style={styles.inputGroup}>
-            <label htmlFor="password" style={styles.label}>
-              Password
-            </label>
-            <input
-              id="password"
-              type="password"
-              placeholder="Enter your password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              style={styles.input}
-              required
-            />
-          </div>
-          <button type="submit" style={styles.button}>
-            Login
-          </button>
-        </form>
-        {error && <div style={styles.error}>{error}</div>}
-        <button
-          onClick={() => navigate('/register')}
-          style={styles.registerButton}
-        >
-          New user? Register here.
+        <button onClick={handleLogin} style={styles.button}>
+          Proceed to Map
         </button>
       </div>
     </div>
@@ -100,39 +35,15 @@ const styles = {
     backgroundColor: '#f7f7f7',
   },
   card: {
-    width: '100%',
-    maxWidth: '400px',
-    backgroundColor: '#fff',
     padding: '2rem',
+    backgroundColor: '#fff',
     borderRadius: '8px',
     boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)',
     textAlign: 'center' as const,
   },
   title: {
     fontSize: '24px',
-    fontWeight: 'bold',
     marginBottom: '1.5rem',
-  },
-  form: {
-    display: 'flex',
-    flexDirection: 'column' as const,
-    gap: '1rem',
-  },
-  inputGroup: {
-    textAlign: 'left' as const,
-  },
-  label: {
-    display: 'block',
-    marginBottom: '0.5rem',
-    fontSize: '14px',
-    color: '#333',
-  },
-  input: {
-    width: '100%',
-    padding: '0.75rem',
-    borderRadius: '4px',
-    border: '1px solid #ccc',
-    fontSize: '14px',
   },
   button: {
     padding: '0.75rem',
@@ -140,23 +51,7 @@ const styles = {
     backgroundColor: '#007bff',
     color: '#fff',
     border: 'none',
-    fontSize: '16px',
     cursor: 'pointer',
-    marginTop: '1rem',
-  },
-  error: {
-    marginTop: '1rem',
-    color: 'red',
-    fontSize: '14px',
-  },
-  registerButton: {
-    marginTop: '1rem',
-    padding: '0.75rem',
-    border: 'none',
-    backgroundColor: 'transparent',
-    color: '#007bff',
-    cursor: 'pointer',
-    textDecoration: 'underline',
   },
 };
 

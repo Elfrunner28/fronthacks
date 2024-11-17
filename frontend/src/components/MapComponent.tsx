@@ -5,12 +5,12 @@ import { GoogleMap, useJsApiLoader, Marker, Libraries } from '@react-google-maps
 type Location = { lat: number; lng: number };
 
 type MapComponentProps = {
-  username: string; // Prop type for username
-  userId: number;
+  userId: string; // The unique user ID (passed from login)
 };
 
 const libraries: Libraries = ['places'];
-const MapComponent: React.FC<MapComponentProps> = ({ username, userId }) => {
+
+const MapComponent: React.FC<MapComponentProps> = ({ userId }) => {
   const navigate = useNavigate(); // React Router's navigation hook
 
   const { isLoaded, loadError } = useJsApiLoader({
@@ -24,7 +24,7 @@ const MapComponent: React.FC<MapComponentProps> = ({ username, userId }) => {
   const [message, setMessage] = useState<string | null>(null);
   const settingPickup = useRef(true);
 
-  const BACKEND_URL = 'https://fronthacks.onrender.com'; // Replace with your Render backend URL
+  const BACKEND_URL = 'https://fronthacks.onrender.com'; // Replace with your backend URL
 
   useEffect(() => {
     setPickup(null);
@@ -53,11 +53,6 @@ const MapComponent: React.FC<MapComponentProps> = ({ username, userId }) => {
   };
 
   const handleSubmit = async () => {
-    if (hasSubmitted) {
-      setMessage('You have already submitted your locations. You cannot submit more.');
-      return;
-    }
-
     if (!pickup || !dropoff) {
       setMessage('Please set both pickup and dropoff locations before submitting.');
       return;
@@ -70,20 +65,18 @@ const MapComponent: React.FC<MapComponentProps> = ({ username, userId }) => {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          user_id: userId,
-          latitude1: pickup.lat,
-          longitude1: pickup.lng,
-          latitude2: dropoff.lat,
-          longitude2: dropoff.lng,
+          id: userId, // Pass the user ID to identify the request
+          start_lat: pickup.lat,
+          start_lng: pickup.lng,
+          end_lat: dropoff.lat,
+          end_lng: dropoff.lng,
         }),
       });
 
       const result = await response.json();
-      console.log('Backend Response:', result);
-
       if (response.ok) {
         setHasSubmitted(true);
-        navigate('/thank-you'); // Redirect to "Thank You" page
+        navigate('/thank-you'); // Navigate to Thank You page after successful submission
       } else {
         setMessage(result.message || 'Failed to submit locations.');
       }
@@ -105,7 +98,7 @@ const MapComponent: React.FC<MapComponentProps> = ({ username, userId }) => {
 
   return (
     <div style={styles.container}>
-      <h2 style={styles.header}>Welcome, {username}! Enter your route requests</h2>
+      <h2 style={styles.header}>Welcome! Enter your route requests</h2>
       <GoogleMap
         mapContainerStyle={styles.mapContainer}
         center={{ lat: 35.1175, lng: -89.9711 }}
