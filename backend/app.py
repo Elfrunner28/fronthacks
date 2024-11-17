@@ -4,7 +4,7 @@ from pyairtable import Table
 from pyairtable.formulas import match
 
 app = Flask(__name__)
-CORS(app, resources={r"/*": {"origins": ["http://localhost:3000", "https://fronthacks-ciug4gako-karti-bombs-projects.vercel.app"]}})
+CORS(app, resources={r"/*": {"origins": "*"}})
 
 AIRTABLE_API_KEY = 'patsFqbRqun6dUd2J.ac98f1950d92ace45ecb36edc8fb73956d10cf63975540135821f13df6814b9b'
 BASE_ID = "appdXx9TjXKr6XqeL"
