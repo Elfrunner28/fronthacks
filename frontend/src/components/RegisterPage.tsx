@@ -32,7 +32,7 @@ const RegisterPage: React.FC = () => {
     }
   };
 
-  return (
+  return (//lol
     <div style={styles.container}>
       <div style={styles.card}>
         <h2 style={styles.title}>Register</h2>
