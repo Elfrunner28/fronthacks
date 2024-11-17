@@ -1,15 +1,18 @@
 from flask import Flask, request, jsonify
 from flask_cors import CORS
-import airtable
+from pyairtable import Table
+from pyairtable.formulas import match
 
 app = Flask(__name__)
-CORS(app, resources={r"/*": {"origins": ["http://localhost:3000", "fronthacks-ciug4gako-karti-bombs-projects.vercel.app"]}})
+CORS(app, resources={r"/*": {"origins": ["http://localhost:3000", "https://fronthacks-ciug4gako-karti-bombs-projects.vercel.app"]}})
 
 AIRTABLE_API_KEY = 'patsFqbRqun6dUd2J.ac98f1950d92ace45ecb36edc8fb73956d10cf63975540135821f13df6814b9b'
 BASE_ID = "appdXx9TjXKr6XqeL"
-at = airtable.Airtable(BASE_ID, AIRTABLE_API_KEY)
 TABLE_NAME_USERS = "users"
 TABLE_NAME_LOCATIONS = "locations"
+
+users_table = Table(AIRTABLE_API_KEY, BASE_ID, TABLE_NAME_USERS)
+locations_table = Table(AIRTABLE_API_KEY, BASE_ID, TABLE_NAME_LOCATIONS)
 
 
 @app.route('/register', methods=['POST'])
@@ -19,13 +22,13 @@ def register():
     password = data.get('password')
 
     # Check if username already exists
-    existing_users = at.get(TABLE_NAME_USERS, formula=f"username='{username}'")
-    if existing_users.get('records'):
+    existing_users = users_table.all(formula=match({"username": username}))
+    if existing_users:
         return jsonify({'status': 'error', 'message': 'Username already exists.'}), 409
 
     # Add new user
     new_user = {'username': username, 'password': password}
-    at.insert(TABLE_NAME_USERS, new_user)
+    users_table.create(new_user)
     return jsonify({'status': 'success', 'message': 'Registration successful!'})
 
 
@@ -36,9 +39,9 @@ def login():
     password = data.get('password')
 
     # Check credentials
-    existing_users = at.get(TABLE_NAME_USERS, formula=f"username='{username}' AND password='{password}'")
-    if existing_users.get('records'):
-        user_id = existing_users['records'][0]['id']
+    existing_users = users_table.all(formula=match({"username": username, "password": password}))
+    if existing_users:
+        user_id = existing_users[0]['id']
         return jsonify({'status': 'success', 'user_id': user_id})
     else:
         return jsonify({'status': 'error', 'message': 'Invalid credentials'}), 401
@@ -54,8 +57,8 @@ def submit():
     longitude2 = data.get('longitude2')
 
     # Check if user has already submitted locations
-    existing_locations = at.get(TABLE_NAME_LOCATIONS, formula=f"user_id='{user_id}'")
-    if existing_locations.get('records'):
+    existing_locations = locations_table.all(formula=match({"user_id": user_id}))
+    if existing_locations:
         return jsonify({'status': 'error', 'message': 'You have already submitted your start and end locations for this session.'}), 403
 
     # Add new location record
@@ -66,7 +69,7 @@ def submit():
         'latitudeEnd': latitude2,
         'longitudeEnd': longitude2,
     }
-    at.insert(TABLE_NAME_LOCATIONS, new_location)
+    locations_table.create(new_location)
     return jsonify({'status': 'success', 'message': 'Coordinates saved successfully.'})
 
 
