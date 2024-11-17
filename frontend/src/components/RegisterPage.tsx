@@ -11,7 +11,7 @@ const RegisterPage: React.FC = () => {
 
   const handleRegister = async () => {
     try {
-      const response = await fetch(`${BACKEND_URL}/register`, { // Changed to use deployed backend URL
+      const response = await fetch('https://fronthacks.onrender.com/register', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
