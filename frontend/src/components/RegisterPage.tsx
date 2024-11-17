@@ -7,9 +7,11 @@ const RegisterPage: React.FC = () => {
   const [message, setMessage] = useState<string | null>(null);
   const navigate = useNavigate();
 
+  const BACKEND_URL = 'https://fronthacks.onrender.com'; // Replace with your deployed Render backend URL
+
   const handleRegister = async () => {
     try {
-      const response = await fetch('http://127.0.0.1:5000/register', {
+      const response = await fetch(`${BACKEND_URL}/register`, { // Changed to use deployed backend URL
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -20,7 +22,7 @@ const RegisterPage: React.FC = () => {
       const result = await response.json();
       if (response.ok) {
         setMessage('Registration successful! Redirecting to login...');
-        setTimeout(() => navigate('/login'), 100); // Redirect to login page after 2 seconds
+        setTimeout(() => navigate('/login'), 100); // Redirect to login page after a short delay
       } else {
         setMessage(result.message || 'Registration failed.');
       }
@@ -29,7 +31,7 @@ const RegisterPage: React.FC = () => {
       setMessage('An error occurred. Please try again.');
     }
   };
-  
+
   return (
     <div style={styles.container}>
       <div style={styles.card}>

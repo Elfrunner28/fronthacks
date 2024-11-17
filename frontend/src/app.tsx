@@ -1,5 +1,5 @@
 import React from 'react';
-import { Routes, Route } from 'react-router-dom';
+import { Routes, Route, Navigate } from 'react-router-dom'; // Added Navigate for redirection
 import LoginPage from './components/LoginPage';
 import MapComponent from './components/MapComponent';
 import ThankYouPage from './components/ThankYouPage';
@@ -13,30 +13,56 @@ const App: React.FC = () => {
   const login = (username: string, userId: number) => {
     setIsLoggedIn(true);
     setUsername(username);
-    setLoggedInUserId(userId); // Save user ID
+    setLoggedInUserId(userId);
   };
 
   const logout = () => {
     setIsLoggedIn(false);
     setUsername(null);
-    setLoggedInUserId(null); // Clear user ID
+    setLoggedInUserId(null);
+  };
+
+  // Protected Route Component
+  const ProtectedRoute: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+    return isLoggedIn ? (
+      <>{children}</> // Render children if logged in
+    ) : (
+      <Navigate to="/login" /> // Redirect to login if not authenticated
+    );
   };
 
   return (
     <Routes>
+      {/* Home/Map Route */}
       <Route
         path="/"
         element={
-          isLoggedIn ? (
+          <ProtectedRoute>
             <MapComponent username={username || ''} userId={loggedInUserId || 0} />
+          </ProtectedRoute>
+        }
+      />
+
+      {/* Login Route */}
+      <Route path="/login" element={<LoginPage onLogin={login} />} />
+
+      {/* Register Route */}
+      <Route path="/register" element={<RegisterPage />} />
+
+      {/* Thank You Route */}
+      <Route
+        path="/thank-you"
+        element={
+          isLoggedIn ? (
+            <ThankYouPage />
           ) : (
-            <LoginPage onLogin={login} />
+            <Navigate to="/login" /> // Protect the Thank You page
           )
         }
       />
-      <Route path="/register" element={<RegisterPage />} />
-      <Route path="/login" element={<LoginPage onLogin={login} />} />
-      <Route path="/thank-you" element={<ThankYouPage />} />
+
+      {/* Catch-All Redirect to Login */}
+      <Route path="*" element={<Navigate to="/login" />} />
     </Routes>
   );
 };

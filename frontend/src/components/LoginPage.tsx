@@ -11,10 +11,12 @@ const LoginPage: React.FC<LoginPageProps> = ({ onLogin }) => {
   const [error, setError] = useState<string | null>(null);
   const navigate = useNavigate();
 
+  const BACKEND_URL = 'https://fronthacks.onrender.com'; // Replace with your Render backend URL
+
   const handleLogin = async () => {
     setError(null); // Reset error message
     try {
-      const response = await fetch('http://127.0.0.1:5000/login', {
+      const response = await fetch(`${BACKEND_URL}/login`, { // Changed to use deployed backend URL
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ username, password }),
@@ -23,7 +25,7 @@ const LoginPage: React.FC<LoginPageProps> = ({ onLogin }) => {
       const result = await response.json();
 
       if (response.ok) {
-        onLogin(username,result.user_id); // Update the app's login state
+        onLogin(username, result.user_id); // Update the app's login state
         navigate('/'); // Redirect to the main page
       } else {
         setError(result.message || 'Invalid credentials');
@@ -78,7 +80,6 @@ const LoginPage: React.FC<LoginPageProps> = ({ onLogin }) => {
           </button>
         </form>
         {error && <div style={styles.error}>{error}</div>}
-        {/* Register button */}
         <button
           onClick={() => navigate('/register')}
           style={styles.registerButton}

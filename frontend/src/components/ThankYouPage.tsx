@@ -18,14 +18,14 @@ const styles = {
     justifyContent: 'center',
     alignItems: 'center',
     minHeight: '100vh',
-    backgroundColor: '#f7f7f7',
+    backgroundColor: '#f7f7f7', // Light background for contrast
   },
   card: {
-    textAlign: 'center' as const,
+    textAlign: 'center' as const, // Ensures all content inside the card is centered
     backgroundColor: '#fff',
     padding: '2rem',
-    borderRadius: '8px',
-    boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)',
+    borderRadius: '8px', // Rounded corners for the card
+    boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)', // Subtle shadow for depth
     maxWidth: '400px',
     width: '90%',
   },
@@ -33,16 +33,16 @@ const styles = {
     fontSize: '24px',
     fontWeight: 'bold',
     marginBottom: '1rem',
-    color: '#333',
+    color: '#333', // Darker color for the title text
   },
   message: {
     fontSize: '16px',
-    color: '#555',
+    color: '#555', // Medium gray for better readability
     marginBottom: '1rem',
   },
   subMessage: {
     fontSize: '14px',
-    color: '#777',
+    color: '#777', // Lighter gray for secondary text
   },
 };
 

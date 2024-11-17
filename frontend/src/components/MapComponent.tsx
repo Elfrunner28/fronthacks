@@ -24,6 +24,8 @@ const MapComponent: React.FC<MapComponentProps> = ({ username, userId }) => {
   const [message, setMessage] = useState<string | null>(null);
   const settingPickup = useRef(true);
 
+  const BACKEND_URL = 'https://fronthacks.onrender.com'; // Replace with your Render backend URL
+
   useEffect(() => {
     setPickup(null);
     setDropoff(null);
@@ -62,7 +64,7 @@ const MapComponent: React.FC<MapComponentProps> = ({ username, userId }) => {
     }
 
     try {
-      const response = await fetch('http://127.0.0.1:5000/submit', {
+      const response = await fetch(`${BACKEND_URL}/submit`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
